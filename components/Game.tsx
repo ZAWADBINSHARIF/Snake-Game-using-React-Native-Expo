@@ -38,7 +38,7 @@ const Game = () => {
     const [food, setFood] = useState<Coordinate>(FOOD_INITIAL_POSITION);
     const [isGameOver, setIsGameOver] = useState<boolean>(false);
 
-    const { setScore, gameRestart, isGamePause, setIsGamePause } = useGlobalContext();
+    const { setScore, gameRestart, isGamePause, setIsGamePause, setGameRestart } = useGlobalContext();
 
     const handleLayout = (event: LayoutChangeEvent) => {
         const { width, height } = event.nativeEvent.layout;
@@ -115,6 +115,20 @@ const Game = () => {
     };
 
 
+    useEffect(() => {
+
+        if (gameRestart === true) {
+            setSnake(SNAKE_INITIAL_POSITION);
+            setFood(FOOD_INITIAL_POSITION);
+            setScore(0);
+            setIsGameOver(false);
+            setIsGamePause(false);
+            setDirection(Direction.DOWN);
+            setGameRestart(false);
+        }
+
+    }, [gameRestart]);
+
 
     useEffect(() => {
 
@@ -133,9 +147,6 @@ const Game = () => {
             flex: 1,
             'backgroundColor': Colors.background,
             marginHorizontal: GAME_VIEW_MARGIN_HORIZONTAL,
-            borderRadius: 12,
-            borderTopStartRadius: 0,
-            borderTopEndRadius: 0,
             justifyContent: 'center',
             alignItems: 'center'
         }
@@ -147,7 +158,8 @@ const Game = () => {
                 onLayout={handleLayout}
                 style={styles.gameContainer}
             >
-                {isGamePause && <Text style={{ fontSize: 56, color: '#3f3f3f8a' }}>Game pause</Text>}
+                {isGamePause && <Text style={{ fontSize: 56, color: Colors.primary }}>Game Pause</Text>}
+                {!isGamePause && isGameOver && <Text style={{ fontSize: 56, color: Colors.primary }}>Game Over</Text>}
                 <Food x={food.x} y={food.y} />
                 <Snake snake={snake} />
             </View>
