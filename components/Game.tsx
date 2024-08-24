@@ -170,7 +170,7 @@ const Game = () => {
             alignItems: 'center'
         }
     });
-    console.log({ score, best_Score });
+
     return (
         <PanGestureHandler onGestureEvent={handleGesture}>
             <View
