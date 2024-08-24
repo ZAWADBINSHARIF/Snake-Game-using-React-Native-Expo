@@ -11,6 +11,9 @@ export interface GlobalValue {
     setGameRestart: React.Dispatch<React.SetStateAction<boolean>>;
     isGameOver: boolean,
     setIsGameOver: React.Dispatch<React.SetStateAction<boolean>>;
+    ateFood: boolean,
+    setAteFood: React.Dispatch<React.SetStateAction<boolean>>;
+    SCORE_INCREMENT: number;
 }
 
 export const GlobalValueContext = createContext<GlobalValue | null>(null);
@@ -21,6 +24,8 @@ const GlobalValueProvider = ({ children }: { children: React.ReactNode; }) => {
     const [isGamePause, setIsGamePause] = useState<boolean>(false);
     const [gameRestart, setGameRestart] = useState<boolean>(false);
     const [isGameOver, setIsGameOver] = useState<boolean>(false);
+    const [ateFood, setAteFood] = useState<boolean>(true);
+    const SCORE_INCREMENT = 5;
 
 
     return (
@@ -33,7 +38,10 @@ const GlobalValueProvider = ({ children }: { children: React.ReactNode; }) => {
                 gameRestart,
                 setGameRestart,
                 isGameOver,
-                setIsGameOver
+                setIsGameOver,
+                ateFood,
+                setAteFood,
+                SCORE_INCREMENT
             }}>
 
             {children}

@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, Dimensions, LayoutChangeEvent } from 'react-native';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View, LayoutChangeEvent } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { GestureEvent, PanGestureHandler, PanGestureHandlerEventPayload } from 'react-native-gesture-handler';
 import useScreenDimensions from '@/hooks/useScreenDimensions';
 import { Coordinate, Direction } from '@/types/types';
@@ -10,13 +10,15 @@ import { SNAKE } from '@/utilies/common_informations';
 import Food from './Food';
 import checkEatFood from '@/utilies/checkEatFood';
 import randomFoodPosition from '@/utilies/randomFoodPosition';
-import GlobalValueProvider, { GlobalValue, GlobalValueContext } from '@/context/GlobalValueProvider';
 import useGlobalContext from '@/hooks/useGlobalContext';
+import useStoreData from '@/hooks/useStoreData';
 
 
 const Game = () => {
 
     const { height: windowHeight, width: windowWidth } = useScreenDimensions();
+    const { getItem, setItem } = useStoreData();
+    const [best_Score, setBest_Score] = useState<number>(0);
     const [gameDimension, setGameDimension] = useState<{ height: number, width: number; }>({
         height: windowHeight,
         width: windowWidth
@@ -31,19 +33,21 @@ const Game = () => {
         yMax: gameDimension.height / SNAKE.STEP
     };
     const MOVE_INTERVAL = 100;
-    const SCORE_INCREMENT = 5;
 
     const [direction, setDirection] = useState<Direction>(Direction.DOWN);
     const [snake, setSnake] = useState<Coordinate[]>(SNAKE_INITIAL_POSITION);
     const [food, setFood] = useState<Coordinate>(FOOD_INITIAL_POSITION);
 
-    const { setScore,
+    const { score,
+        setScore,
         gameRestart,
         isGamePause,
         setIsGamePause,
         setGameRestart,
         isGameOver,
-        setIsGameOver } = useGlobalContext();
+        setIsGameOver,
+        setAteFood,
+        SCORE_INCREMENT } = useGlobalContext();
 
     const handleLayout = (event: LayoutChangeEvent) => {
         const { width, height } = event.nativeEvent.layout;
@@ -79,16 +83,29 @@ const Game = () => {
         }
     };
 
-    const moveSnake = () => {
+    const moveSnake = async () => {
 
         const snakeHead = snake[0];
         const newHead = { ...snakeHead };
 
-        if (checkGameOver(snakeHead, GAME_BOUNDS)) {
+        if (checkGameOver(snakeHead, GAME_BOUNDS) || score === -50) {
+            const savedBestScore = await getItem('best_score');
+
+            if (!savedBestScore) {
+                setItem('best_score', score.toString());
+                setBest_Score(score);
+            } else {
+                if (score >= parseInt(savedBestScore)) {
+                    setItem('best_score', score.toString());
+                    setBest_Score(score);
+                } else {
+                    setBest_Score(parseInt(savedBestScore));
+                }
+            }
+
             setIsGameOver(prev => !prev);
             return;
         }
-
 
         switch (direction) {
             case Direction.UP:
@@ -109,8 +126,8 @@ const Game = () => {
             setFood(randomFoodPosition(GAME_BOUNDS.xMax, GAME_BOUNDS.yMax));
             setScore(prev => prev += SCORE_INCREMENT);
             setSnake([newHead, ...snake]);
+            setAteFood(true);
             return;
-
         }
 
         setSnake([newHead, ...snake.slice(0, -1)]);
@@ -153,20 +170,35 @@ const Game = () => {
             alignItems: 'center'
         }
     });
-
+    console.log({ score, best_Score });
     return (
         <PanGestureHandler onGestureEvent={handleGesture}>
             <View
                 onLayout={handleLayout}
                 style={styles.gameContainer}
             >
-                {isGamePause && <Text style={{ fontSize: 56, color: Colors.primary }}>Game Pause </Text>}
-                {!isGamePause && isGameOver && <Text style={{ fontSize: 56, color: Colors.primary }}>Game Over </Text>}
                 <Food x={food.x} y={food.y} />
                 <Snake snake={snake} />
+                {isGamePause &&
+                    <Text style={{ fontSize: 56, color: Colors.primary }}>Game Pause </Text>
+
+                }
+                {!isGamePause && isGameOver &&
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 56, color: Colors.primary }}>
+                            Game Over
+                        </Text>
+                        <Text style={{ fontSize: 26, color: Colors.primary }}>
+                            Score: {score}
+                        </Text>
+                        <Text style={{ fontSize: 26, color: Colors.primary }}>
+                            Best score: {best_Score}
+                        </Text>
+                    </View>
+                }
             </View>
         </PanGestureHandler>
     );
 };
 
-export default Game;
+export default Game;;

@@ -14,8 +14,6 @@ const Dashboard = () => {
         setIsGamePause,
         isGameOver } = useGlobalContext();
 
-    console.log(score);
-
     return (
         <View style={styles.Dashboard}>
             <MaterialCommunityIcons name="reload" size={38} color={Colors.primary} onPress={() => setGameRestart(!gameRestart)} />

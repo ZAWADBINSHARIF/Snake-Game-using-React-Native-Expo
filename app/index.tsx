@@ -16,11 +16,13 @@ const index = () => {
             <StatusBar style='dark' />
 
             <GlobalValueProvider>
+                <Dashboard />
+
                 <GestureHandlerRootView style={{ flex: 1 }}>
-                    <Dashboard />
                     <Game />
-                    <Footer />
                 </GestureHandlerRootView>
+
+                <Footer />
             </GlobalValueProvider>
 
         </SafeAreaView>
