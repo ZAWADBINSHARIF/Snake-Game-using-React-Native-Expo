@@ -9,22 +9,19 @@ export interface GlobalValue {
     setIsGamePause: React.Dispatch<React.SetStateAction<boolean>>,
     gameRestart: boolean,
     setGameRestart: React.Dispatch<React.SetStateAction<boolean>>;
+    isGameOver: boolean,
+    setIsGameOver: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const GlobalValueContext = createContext<GlobalValue>({
-    score: 0,
-    setScore: () => 0,
-    isGamePause: false,
-    setIsGamePause: () => false,
-    gameRestart: false,
-    setGameRestart: () => false
-});
+export const GlobalValueContext = createContext<GlobalValue | null>(null);
 
 const GlobalValueProvider = ({ children }: { children: React.ReactNode; }) => {
 
     const [score, setScore] = useState<number>(0);
     const [isGamePause, setIsGamePause] = useState<boolean>(false);
     const [gameRestart, setGameRestart] = useState<boolean>(false);
+    const [isGameOver, setIsGameOver] = useState<boolean>(false);
+
 
     return (
         <GlobalValueContext.Provider
@@ -34,7 +31,9 @@ const GlobalValueProvider = ({ children }: { children: React.ReactNode; }) => {
                 isGamePause,
                 setIsGamePause,
                 gameRestart,
-                setGameRestart
+                setGameRestart,
+                isGameOver,
+                setIsGameOver
             }}>
 
             {children}

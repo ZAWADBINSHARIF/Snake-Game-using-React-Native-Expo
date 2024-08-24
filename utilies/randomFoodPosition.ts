@@ -7,7 +7,7 @@ export default function randomFoodPosition(maxX: number, maxY: number): Coordina
     // maxY = maxY + FOOD.HEIGHT / FOOD.STEP;
 
     return {
-        x: Math.round(Math.random() * maxX) - FOOD.WIDTH / FOOD.STEP,
-        y: Math.round(Math.random() * maxY) - FOOD.HEIGHT / FOOD.STEP
+        x: Math.random() * (maxX - FOOD.SIZE / FOOD.STEP),
+        y: Math.random() * (maxY - FOOD.SIZE / FOOD.STEP)
     };
 }
