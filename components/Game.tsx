@@ -162,6 +162,8 @@ const Game = () => {
 
         if (isGameOver) {
             bgSound?.stopAsync();
+        } else {
+            bgSound?.playAsync();
         }
 
     }, [isGameOver, bgSound]);
@@ -184,7 +186,6 @@ const Game = () => {
                 {
                     isLooping: true,
                     volume: 0.4,
-                    shouldPlay: true
                 }
             );
             setBgSound(bg_sound);
