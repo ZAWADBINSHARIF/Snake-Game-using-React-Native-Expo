@@ -6,15 +6,21 @@ import { Coordinate, Direction } from '@/types/types';
 import { Colors } from '@/constants/Colors';
 import Snake from './Snake';
 import checkGameOver from '@/utilies/checkGameOver';
-import {FOOD, SNAKE} from '@/utilies/common_informations';
+import { SNAKE } from '@/utilies/common_informations';
 import Food from './Food';
 import checkEatFood from '@/utilies/checkEatFood';
 import randomFoodPosition from '@/utilies/randomFoodPosition';
 import useGlobalContext from '@/hooks/useGlobalContext';
 import useStoreData from '@/hooks/useStoreData';
+import { Audio } from 'expo-av';
 
 
 const Game = () => {
+
+    const [bgSound, setBgSound] = useState<Audio.Sound>();
+    const [eatSound, setEatSound] = useState<Audio.Sound>();
+    const [gameOverSound, setGameOverSound] = useState<Audio.Sound>();
+
 
     const { height: windowHeight, width: windowWidth } = useScreenDimensions();
     const { getItem, setItem } = useStoreData();
@@ -91,6 +97,8 @@ const Game = () => {
         if (checkGameOver(snakeHead, GAME_BOUNDS) || score === -50) {
             const savedBestScore = await getItem('best_score');
 
+            gameOverSound?.playAsync();
+
             if (!savedBestScore) {
                 setItem('best_score', score.toString());
                 setBest_Score(score);
@@ -127,6 +135,8 @@ const Game = () => {
             setScore(prev => prev += SCORE_INCREMENT);
             setSnake([newHead, ...snake]);
             setAteFood(true);
+            eatSound?.stopAsync();
+            eatSound?.playAsync();
             return;
         }
 
@@ -148,6 +158,13 @@ const Game = () => {
 
     }, [gameRestart]);
 
+    useEffect(() => {
+
+        if (isGameOver) {
+            bgSound?.stopAsync();
+        }
+
+    }, [isGameOver, bgSound]);
 
     useEffect(() => {
 
@@ -159,6 +176,32 @@ const Game = () => {
             return () => clearInterval(intervalID);
         }
     }, [snake, isGameOver, isGamePause]);
+
+    useEffect(() => {
+
+        const loadSoundAssets = async () => {
+            let { sound: bg_sound } = await Audio.Sound.createAsync(require('@/assets/sound/bg_music.mp3'),
+                {
+                    isLooping: true,
+                    volume: 0.4,
+                    shouldPlay: true
+                }
+            );
+            setBgSound(bg_sound);
+
+            let { sound: eat_sound } = await Audio.Sound.createAsync(require('@/assets/sound/eat.mp3'));
+            setEatSound(eat_sound);
+
+            let { sound: game_over_sound } = await Audio.Sound.createAsync(require('@/assets/sound/game_over.mp3'), {
+                volume: 0.4
+            });
+            setGameOverSound(game_over_sound);
+
+        };
+
+        loadSoundAssets();
+
+    }, []);
 
     // ** STYLES
     const styles = StyleSheet.create({
@@ -187,13 +230,13 @@ const Game = () => {
                 {!isGamePause && isGameOver &&
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ fontSize: 56, color: Colors.primary }}>
-                            Game Over
+                            Game Over {" "}
                         </Text>
                         <Text style={{ fontSize: 26, color: Colors.primary }}>
-                            Score: {score}
+                            Score: {score + " "}
                         </Text>
                         <Text style={{ fontSize: 26, color: Colors.primary }}>
-                            Best score: {best_Score}
+                            Best score: {best_Score + " "}
                         </Text>
                     </View>
                 }
