@@ -13,7 +13,7 @@ const index = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style='dark' />
+            <StatusBar style='light' />
 
             <GlobalValueProvider>
                 <Dashboard />

@@ -6,7 +6,7 @@ import { Coordinate, Direction } from '@/types/types';
 import { Colors } from '@/constants/Colors';
 import Snake from './Snake';
 import checkGameOver from '@/utilies/checkGameOver';
-import { SNAKE } from '@/utilies/common_informations';
+import {FOOD, SNAKE} from '@/utilies/common_informations';
 import Food from './Food';
 import checkEatFood from '@/utilies/checkEatFood';
 import randomFoodPosition from '@/utilies/randomFoodPosition';
@@ -136,7 +136,7 @@ const Game = () => {
 
     useEffect(() => {
 
-        if (gameRestart === true) {
+        if (gameRestart) {
             setSnake(SNAKE_INITIAL_POSITION);
             setFood(FOOD_INITIAL_POSITION);
             setScore(0);
@@ -177,6 +177,7 @@ const Game = () => {
                 onLayout={handleLayout}
                 style={styles.gameContainer}
             >
+                {/*<Text>{FOOD.ICONS}</Text>*/}
                 <Food x={food.x} y={food.y} />
                 <Snake snake={snake} />
                 {isGamePause &&
@@ -201,4 +202,4 @@ const Game = () => {
     );
 };
 
-export default Game;;
+export default Game;

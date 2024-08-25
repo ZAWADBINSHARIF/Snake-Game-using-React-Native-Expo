@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.jpg",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.zawadbinsharif.Snakypple_Game"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "8be5565c-4e40-4bf0-8115-e1c821402beb"
+      }
     }
   }
 }

@@ -7,10 +7,10 @@ import { FOOD } from '@/utilies/common_informations';
 const Food = ({ x, y }: Coordinate) => {
 
     const foodIcons = FOOD.ICONS;
-    const [foodIconIndex, setFoodIconIndex] = useState(Math.floor(Math.random() * foodIcons.length - 1));
+    const [foodIconIndex, setFoodIconIndex] = useState(Math.floor(Math.random() * foodIcons.length));
 
     useEffect(() => {
-        setFoodIconIndex(Math.round(Math.random() * foodIcons.length - 1));
+        setFoodIconIndex(Math.round(Math.random() * foodIcons.length));
     }, [x, y]);
 
     return <Text
